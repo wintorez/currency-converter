@@ -1,0 +1,30 @@
+{
+  "name": "currency-converter",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.4",
+    "money": "^0.2.0",
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "validator": "^6.2.0",
+    "whatwg-fetch": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.12.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.5.1",
+    "react-scripts": "^1.0.16"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "lint": "eslint src --quiet"
+  }
+}
