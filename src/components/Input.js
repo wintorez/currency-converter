@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import validator from 'validator';
 import uniqueId from 'lodash/uniqueId';
 import Help from './Help';
 
-class CurrencyInput extends React.Component {
+class CurrencyInput extends Component {
   state = {
     id: uniqueId('currency-input'),
     hasError: false,
@@ -20,21 +20,25 @@ class CurrencyInput extends React.Component {
       amount: value,
       source: this.props.source,
     });
-  }
+  };
 
   handleCurrencyChange = (e) => {
     this.props.onCurrencyChange({
       currency: e.target.value,
       source: this.props.source,
     });
-  }
+  };
 
   render() {
     const helpBlock = this.state.hasError ? <Help>Invalid amount</Help> : null;
-    const containerClass = `form-group${this.state.hasError ? ' has-error' : ''}`;
+    const containerClass = `form-group${
+      this.state.hasError ? ' has-error' : ''
+    }`;
     return (
       <div className={containerClass}>
-        <label className="control-label" htmlFor={this.state.id}>{this.props.label}</label>
+        <label className="control-label" htmlFor={this.state.id}>
+          {this.props.label}
+        </label>
         <div>
           <input
             id={this.state.id}

@@ -1,4 +1,4 @@
-# Currency Converter Widget Demo
+# Currency Converter Demo
 
 This project was created to showcase widget creation with React.
 

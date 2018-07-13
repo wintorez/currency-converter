@@ -1,9 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import fx from 'money';
-import 'isomorphic-fetch';
-import CurrencyInput from './CurrencyInput';
+import Input from './Input';
 
 class CurrencyConverter extends React.Component {
+  static propTypes = {
+    src: PropTypes.string,
+  };
+
+  static defaultProps = {
+    src: '/api/latest.json',
+  };
+
   state = {
     from: {
       amount: '',
@@ -23,14 +31,20 @@ class CurrencyConverter extends React.Component {
       fx.base = base;
       fx.rates = rates;
     } catch (err) {
-      window.setTimeout(() => { this.setState({ hasError: true }); }, 0);
+      window.setTimeout(() => {
+        this.setState({ hasError: true });
+      }, 0);
     }
   }
 
-  convert = (amount, source, destination) => (Number.isNaN(parseFloat(amount))
-    ? ''
-    : fx(amount).from(source).to(destination).toFixed(2)
-      .replace(/\.00$/g, ''));
+  convert = (amount, source, destination) =>
+    (Number.isNaN(parseFloat(amount))
+      ? ''
+      : fx(amount)
+        .from(source)
+        .to(destination)
+        .toFixed(2)
+        .replace(/\.00$/g, ''));
 
   handleAmountChange = ({ source, amount }) => {
     if (source === 'from') {
@@ -56,7 +70,7 @@ class CurrencyConverter extends React.Component {
         },
       }));
     }
-  }
+  };
 
   handleCurrencyChange = ({ source, currency }) => {
     if (source === 'from') {
@@ -78,17 +92,13 @@ class CurrencyConverter extends React.Component {
         },
       }));
     }
-  }
-
-  showDisclaimer = () => {
-    window.alert('This widget uses Fixer.io which is a free JSON API for current and historical foreign exchange rates published by the European Central Bank. The rates are updated daily around 3PM CET.');
-  }
+  };
 
   render() {
     const form = (
       <div>
         <form>
-          <CurrencyInput
+          <Input
             source="from"
             label="Type in amount and select currency:"
             onAmountChange={this.handleAmountChange}
@@ -96,7 +106,7 @@ class CurrencyConverter extends React.Component {
             amount={this.state.from.amount}
             currency={this.state.from.currency}
           />
-          <CurrencyInput
+          <Input
             source="to"
             label="Converted amount:"
             onAmountChange={this.handleAmountChange}
@@ -105,9 +115,6 @@ class CurrencyConverter extends React.Component {
             currency={this.state.to.currency}
           />
         </form>
-        <div className="text-right">
-          <button className="btn btn-info" onClick={this.showDisclaimer}>Disclaimer</button>
-        </div>
       </div>
     );
     const error = (
@@ -118,20 +125,10 @@ class CurrencyConverter extends React.Component {
     return (
       <div className="currency-converter panel panel-default">
         <div className="panel-heading">Currency converter</div>
-        <div className="panel-body">
-          {
-            this.state.hasError
-              ? error
-              : form
-          }
-        </div>
+        <div className="panel-body">{this.state.hasError ? error : form}</div>
       </div>
     );
   }
 }
-
-CurrencyConverter.defaultProps = {
-  src: 'http://api.fixer.io/latest',
-};
 
 export default CurrencyConverter;
