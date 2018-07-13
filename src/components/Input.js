@@ -1,56 +1,54 @@
 import React, { Component } from 'react';
-import validator from 'validator';
 import uniqueId from 'lodash/uniqueId';
 import Help from './Help';
 
 class CurrencyInput extends Component {
   state = {
     id: uniqueId('currency-input'),
-    hasError: false,
+    hasError: false
   };
 
-  handleAmountChange = (e) => {
-    const { value } = e.target;
-    if (value === '' || validator.isFloat(value)) {
-      this.setState({ hasError: false });
-    } else {
-      this.setState({ hasError: true });
-    }
-    this.props.onAmountChange({
-      amount: value,
-      source: this.props.source,
-    });
-  };
+  handleAmountChange = ({ target: { value } }) =>
+    this.setState(
+      { hasError: value.trim() !== '' && isNaN(parseFloat(value)) },
+      () =>
+        this.props.onAmountChange({
+          amount: value,
+          source: this.props.source
+        })
+    );
 
-  handleCurrencyChange = (e) => {
+  handleCurrencyChange = ({ target: { value } }) =>
     this.props.onCurrencyChange({
-      currency: e.target.value,
-      source: this.props.source,
+      currency: value,
+      source: this.props.source
     });
-  };
 
   render() {
-    const helpBlock = this.state.hasError ? <Help>Invalid amount</Help> : null;
+    const { id, hasError } = this.state;
+    const { label, amount = '', currency } = this.props;
+    const helpBlock = hasError ? <Help>Invalid amount</Help> : null;
     const containerClass = `form-group${
       this.state.hasError ? ' has-error' : ''
     }`;
+
     return (
       <div className={containerClass}>
-        <label className="control-label" htmlFor={this.state.id}>
-          {this.props.label}
+        <label className="control-label" htmlFor={id}>
+          {label}
         </label>
         <div>
           <input
-            id={this.state.id}
+            id={id}
             type="text"
             className="form-control"
-            value={this.props.amount || ''}
+            value={amount}
             onChange={this.handleAmountChange}
             placeholder="0.00"
           />
           <select
             className="form-control"
-            value={this.props.currency}
+            value={currency}
             onChange={this.handleCurrencyChange}
           >
             <option>CAD</option>
