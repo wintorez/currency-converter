@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import cx from 'classnames';
 import uniqueId from 'lodash/uniqueId';
 import Help from './Help';
 
 class CurrencyInput extends Component {
   state = {
-    id: uniqueId('currency-input'),
+    inputId: uniqueId('currency-input'),
     hasError: false
   };
 
@@ -25,21 +26,22 @@ class CurrencyInput extends Component {
     });
 
   render() {
-    const { id, hasError } = this.state;
+    const { inputId, hasError } = this.state;
     const { label, amount = '', currency } = this.props;
-    const helpBlock = hasError ? <Help>Invalid amount</Help> : null;
-    const containerClass = `form-group${
-      this.state.hasError ? ' has-error' : ''
-    }`;
 
     return (
-      <div className={containerClass}>
-        <label className="control-label" htmlFor={id}>
+      <div
+        className={cx({
+          'form-group': true,
+          'has-error': hasError
+        })}
+      >
+        <label className="control-label" htmlFor={inputId}>
           {label}
         </label>
         <div>
           <input
-            id={id}
+            id={inputId}
             type="text"
             className="form-control"
             value={amount}
@@ -56,7 +58,7 @@ class CurrencyInput extends Component {
             <option>EUR</option>
           </select>
         </div>
-        {helpBlock}
+        {hasError && <Help>Invalid amount</Help>}
       </div>
     );
   }
