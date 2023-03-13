@@ -23,9 +23,14 @@ export function Converter(props) {
     hasError: false,
   })
 
-  const src = props.src ?? '/api/latest.json'
-  const fetcher = () => axios.get(src).then((r) => r.data)
-  const { data, error, isLoading } = useSWR(src, fetcher)
+  const url =
+    props.src ??
+    'https://api.apilayer.com/exchangerates_data/latest?base=USD&symbols=CAD,EUR,USD'
+  const fetcher = () =>
+    axios
+      .get(url, { headers: { apikey: import.meta.env.VITE_API_KEY } })
+      .then((r) => r.data)
+  const { data, error, isLoading } = useSWR(url, fetcher)
 
   if (error) {
     return (
@@ -39,7 +44,12 @@ export function Converter(props) {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <div>
+        <h2 className="mb-0">Currency Converter</h2>
+        <div>Loading...</div>
+      </div>
+    )
   }
 
   fx.base = data.base

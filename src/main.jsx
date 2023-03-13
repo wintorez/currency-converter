@@ -8,6 +8,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <h1>Currency Converter Demo</h1>
     <Converter />
     <Converter />
-    <Converter src="invalid_feed_url" />
+    <Converter src="https://api.apilayer.com/exchangerates" />
   </div>
 )
