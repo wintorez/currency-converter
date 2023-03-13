@@ -1,17 +1,11 @@
-.currency-converter {
-  width: 100%;
-  max-width: 400px;
+@tailwind base;
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
 }
-.currency-converter input {
-  width: 50%;
-  margin-right: 1%;
-}
-.currency-converter select {
-  width: 49%;
-  height: 33px;
-}
-.currency-converter input,
-.currency-converter select {
-  display: inline-block;
-  margin-top: 0;
-}
+@tailwind components;
+@tailwind utilities;

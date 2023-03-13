@@ -1,13 +1,11 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import uniqueId from 'lodash/uniqueId';
-import Help from './Help';
+import * as React from 'react'
+import { uniqueId } from 'lodash'
 
-class CurrencyInput extends Component {
+export class Input extends React.Component {
   state = {
     inputId: uniqueId('currency-input'),
-    hasError: false
-  };
+    hasError: false,
+  }
 
   handleAmountChange = ({ target: { value } }) =>
     this.setState(
@@ -15,41 +13,36 @@ class CurrencyInput extends Component {
       () =>
         this.props.onAmountChange({
           amount: value,
-          source: this.props.source
+          source: this.props.source,
         })
-    );
+    )
 
   handleCurrencyChange = ({ target: { value } }) =>
     this.props.onCurrencyChange({
       currency: value,
-      source: this.props.source
-    });
+      source: this.props.source,
+    })
 
   render() {
-    const { inputId, hasError } = this.state;
-    const { label, amount = '', currency } = this.props;
+    const { inputId, hasError } = this.state
+    const { label, amount = '', currency } = this.props
 
     return (
-      <div
-        className={cx({
-          'form-group': true,
-          'has-error': hasError
-        })}
-      >
-        <label className="control-label" htmlFor={inputId}>
+      <div className="form-control">
+        <label className="label" htmlFor={inputId}>
           {label}
         </label>
         <div>
           <input
             id={inputId}
             type="text"
-            className="form-control"
+            className="input"
             value={amount}
             onChange={this.handleAmountChange}
             placeholder="0.00"
           />
           <select
-            className="form-control"
+            className="input"
             value={currency}
             onChange={this.handleCurrencyChange}
           >
@@ -58,10 +51,8 @@ class CurrencyInput extends Component {
             <option>EUR</option>
           </select>
         </div>
-        {hasError && <Help>Invalid amount</Help>}
+        {hasError && <p>Invalid amount</p>}
       </div>
-    );
+    )
   }
 }
-
-export default CurrencyInput;
