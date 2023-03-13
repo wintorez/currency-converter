@@ -4,22 +4,10 @@ import { Converter } from './components'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <div className="container mx-auto">
+  <div className="container mx-auto prose">
     <h1>Currency Converter Demo</h1>
-    <p>
-      The conversion is bi-directional. You can change the converted amount as
-      well.
-    </p>
     <Converter />
-    <p>
-      Each widget can be loaded multiple times in the same page and they work
-      independently.
-    </p>
     <Converter />
-    <p>
-      This widget is pointing to an incorrect URL intentionally to show how it
-      handles errors.
-    </p>
     <Converter src="invalid_feed_url" />
   </div>
 )

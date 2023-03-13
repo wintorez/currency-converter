@@ -1,13 +1,17 @@
 import * as React from 'react'
+import axios from 'axios'
 import fx from 'money'
+import useSWR from 'swr'
 import { Input } from '.'
 
-export class Converter extends React.Component {
-  static defaultProps = {
-    src: '/api/latest.json',
-  }
+function convert(amount, source, destination) {
+  return !Number.isNaN(parseFloat(amount))
+    ? fx(amount).from(source).to(destination).toFixed(2).replace(/\.00$/g, '')
+    : ''
+}
 
-  state = {
+export function Converter(props) {
+  const [state, setState] = React.useState({
     from: {
       amount: '',
       currency: 'CAD',
@@ -17,107 +21,97 @@ export class Converter extends React.Component {
       currency: 'USD',
     },
     hasError: false,
-  }
+  })
 
-  async componentDidMount() {
-    try {
-      const response = await fetch(this.props.src)
-      const { base, rates } = await response.json()
-      fx.base = base
-      fx.rates = rates
-    } catch (err) {
-      window.setTimeout(() => {
-        this.setState({ hasError: true })
-      }, 0)
-    }
-  }
+  const src = props.src ?? '/api/latest.json'
+  const fetcher = () => axios.get(src).then((r) => r.data)
+  const { data, error, isLoading } = useSWR(src, fetcher)
 
-  convert = (amount, source, destination) =>
-    Number.isNaN(parseFloat(amount))
-      ? ''
-      : fx(amount).from(source).to(destination).toFixed(2).replace(/\.00$/g, '')
-
-  handleAmountChange = ({ source, amount }) => {
-    if (source === 'from') {
-      this.setState(({ from, to }) => ({
-        from: {
-          ...from,
-          amount,
-        },
-        to: {
-          ...to,
-          amount: this.convert(amount, from.currency, to.currency),
-        },
-      }))
-    } else {
-      this.setState(({ from, to }) => ({
-        to: {
-          ...to,
-          amount,
-        },
-        from: {
-          ...from,
-          amount: this.convert(amount, to.currency, from.currency),
-        },
-      }))
-    }
-  }
-
-  handleCurrencyChange = ({ source, currency }) => {
-    if (source === 'from') {
-      this.setState(({ from, to }) => ({
-        from: {
-          ...from,
-          currency,
-        },
-        to: {
-          ...to,
-          amount: this.convert(from.amount, currency, to.currency),
-        },
-      }))
-    } else {
-      this.setState(({ from }) => ({
-        to: {
-          currency,
-          amount: this.convert(from.amount, from.currency, currency),
-        },
-      }))
-    }
-  }
-
-  render() {
-    const inputs = (
-      <div>
-        <Input
-          source="from"
-          label="Type in amount and select currency:"
-          onAmountChange={this.handleAmountChange}
-          onCurrencyChange={this.handleCurrencyChange}
-          amount={this.state.from.amount}
-          currency={this.state.from.currency}
-        />
-        <Input
-          source="to"
-          label="Converted amount:"
-          onAmountChange={this.handleAmountChange}
-          onCurrencyChange={this.handleCurrencyChange}
-          amount={this.state.to.amount}
-          currency={this.state.to.currency}
-        />
-      </div>
-    )
-
-    const error = (
-      <div className="alert alert-error">
-        Error: Unable to load conversion rates!
-      </div>
-    )
-
+  if (error) {
     return (
-      <div className="my-5">
-        <h2>Currency converter</h2>
-        {this.state.hasError ? error : inputs}
+      <div>
+        <h2 className="mb-0">Currency Converter</h2>
+        <div className="alert alert-error">
+          Error: Unable to load conversion rates!
+        </div>
       </div>
     )
   }
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  fx.base = data.base
+  fx.rates = data.rates
+
+  function handleAmountChange({ source, amount }) {
+    if (source === 'from') {
+      setState(({ from, to }) => ({
+        from: {
+          ...from,
+          amount,
+        },
+        to: {
+          ...to,
+          amount: convert(amount, from.currency, to.currency),
+        },
+      }))
+    } else {
+      setState(({ from, to }) => ({
+        to: {
+          ...to,
+          amount,
+        },
+        from: {
+          ...from,
+          amount: convert(amount, to.currency, from.currency),
+        },
+      }))
+    }
+  }
+
+  function handleCurrencyChange({ source, currency }) {
+    if (source === 'from') {
+      setState(({ from, to }) => ({
+        from: {
+          ...from,
+          currency,
+        },
+        to: {
+          ...to,
+          amount: convert(from.amount, currency, to.currency),
+        },
+      }))
+    } else {
+      setState(({ from }) => ({
+        to: {
+          currency,
+          amount: convert(from.amount, from.currency, currency),
+        },
+      }))
+    }
+  }
+
+  return (
+    <div>
+      <h2 className="mb-0">Currency Converter</h2>
+      <Input
+        source="from"
+        label="Type in amount and select currency:"
+        onAmountChange={handleAmountChange}
+        onCurrencyChange={handleCurrencyChange}
+        amount={state.from.amount}
+        currency={state.from.currency}
+      />
+      <Input
+        source="to"
+        label="Converted amount:"
+        onAmountChange={handleAmountChange}
+        onCurrencyChange={handleCurrencyChange}
+        amount={state.to.amount}
+        currency={state.to.currency}
+      />
+    </div>
+  )
 }
