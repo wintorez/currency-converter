@@ -2,6 +2,10 @@
 
 This project was created to showcase widget creation with React.
 
+## Demo
+
+https://shiny-griffin-035454.netlify.app/
+
 Below you will find some information on how to perform common tasks.
 
 ## Installation
